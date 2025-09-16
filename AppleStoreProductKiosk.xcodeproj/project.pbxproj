@@ -34,9 +34,22 @@
 		C8F725F52E790FA100C2A1DE /* AppleStoreProductKioskUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppleStoreProductKioskUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7F41C5542E798756007C4017 /* Exceptions for "AppleStoreProductKiosk" folder in "AppleStoreProductKiosk" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Info.plist,
+			);
+			target = C8F725DD2E790F9F00C2A1DE /* AppleStoreProductKiosk */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C8F725E02E790F9F00C2A1DE /* AppleStoreProductKiosk */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7F41C5542E798756007C4017 /* Exceptions for "AppleStoreProductKiosk" folder in "AppleStoreProductKiosk" target */,
+			);
 			path = AppleStoreProductKiosk;
 			sourceTree = "<group>";
 		};
@@ -415,6 +428,7 @@
 				DEVELOPMENT_TEAM = N94CS4N6VR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AppleStoreProductKiosk/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -448,6 +462,7 @@
 				DEVELOPMENT_TEAM = N94CS4N6VR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AppleStoreProductKiosk/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
