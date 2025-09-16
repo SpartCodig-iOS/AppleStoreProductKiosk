@@ -1,5 +1,5 @@
 {
-  "originHash" : "e7024a9cd3fa1c40fa4003b3b2b186c00ba720c787de8ba274caf8fc530677e8",
+  "originHash" : "2dca7853559f7864330c2dbfcce0e8773f8a6eed1a2655160e25725cb56049fc",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -8,6 +8,24 @@
       "state" : {
         "revision" : "5928286acce13def418ec36d05a001a9641086f2",
         "version" : "1.0.3"
+      }
+    },
+    {
+      "identity" : "dicontainer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Roy-wonji/DiContainer",
+      "state" : {
+        "revision" : "4b5b953be1a9cd81015009938798943121094123",
+        "version" : "2.0.1"
+      }
+    },
+    {
+      "identity" : "logmacro",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Roy-wonji/LogMacro.git",
+      "state" : {
+        "revision" : "b3925408303ea8efa580112131d7118b09e102d1",
+        "version" : "1.1.0"
       }
     },
     {
