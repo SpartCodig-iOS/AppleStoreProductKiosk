@@ -1,5 +1,5 @@
 //
-//  ShoppingCartView.swift
+//  CartHeaderView.swift
 //  AppleStoreProductKiosk
 //
 //  Created by 김민희 on 9/16/25.
@@ -7,15 +7,11 @@
 
 import SwiftUI
 
-struct ShoppingCartView: View {
+struct CartHeaderView: View {
   @Environment(\.dismiss) var dismiss
 
   var body: some View {
-    headerView
-  }
-
-  private var headerView: some View {
-    HStack (spacing: 0) {
+    HStack(spacing: 0) {
       Text("장바구니")
         .font(.system(size: 20, weight: .bold))
       Spacer()
@@ -27,7 +23,7 @@ struct ShoppingCartView: View {
           .foregroundColor(.black)
           .font(.system(size: 15))
           .padding(8)
-          .background(Color.gray.opacity(0.15))
+          .background(.gray.opacity(0.15))
           .clipShape(Circle())
       }
     }
@@ -37,5 +33,5 @@ struct ShoppingCartView: View {
 }
 
 #Preview {
-  ShoppingCartView()
+  CartHeaderView()
 }
