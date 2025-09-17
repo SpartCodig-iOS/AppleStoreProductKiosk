@@ -28,7 +28,7 @@ struct CartButtonView: View {
               .foregroundColor(.blue)
               .background(Color.white)
               .clipShape(Circle())
-              .offset(x: 6, y: -6)
+              .offset(x: 5, y: -5)
           }
         }
         
@@ -43,10 +43,10 @@ struct CartButtonView: View {
           .font(.system(size: 14, weight: .bold))
           .frame(maxWidth: .infinity, alignment: .trailing)
       }
-      .padding(.vertical, 10)
+      .padding(.vertical, 14)
       .padding(.horizontal, 16)
       .background(Color.accentColor)
-      .clipShape(RoundedRectangle(cornerRadius: 12))
+      .clipShape(RoundedRectangle(cornerRadius: 16))
     }
   }
 }
