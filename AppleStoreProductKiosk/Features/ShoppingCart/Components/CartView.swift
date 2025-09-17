@@ -16,12 +16,20 @@ struct CartView: View {
       Divider()
 
       ScrollView {
-        CartItemRowView(item: $item)
-          .padding(.horizontal, 20)
-          .padding(.vertical, 10)
+        VStack(spacing: 15) {
+          CartItemRowView(item: $item)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 30)
       }
+      .scrollIndicators(.hidden)
 
       Divider()
+
+      CartSummaryView(item: $item)
+        .padding(.vertical, 20)
+
+      CartActionButtonsView()
     }
   }
 }

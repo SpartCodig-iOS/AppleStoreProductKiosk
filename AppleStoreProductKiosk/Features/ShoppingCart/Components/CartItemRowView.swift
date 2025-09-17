@@ -74,10 +74,8 @@ struct CartItemRowView: View {
                 Circle()
                   .stroke(.gray.opacity(0.3), lineWidth: 0.7)
               )
-
           }
         }
-
 
         Text("\(item.quantity)").frame(minWidth: 20)
 
