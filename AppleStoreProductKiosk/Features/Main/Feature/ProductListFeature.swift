@@ -10,6 +10,8 @@ import ComposableArchitecture
 @Reducer
 public struct ProductListFeature {
   
+  @Dependency(\.fetchProductsUseCase) var fetchProducts
+  
   @ObservableState
   public struct State: Equatable {
     @Shared var selectedProducts: [Product]
@@ -122,8 +124,10 @@ extension ProductListFeature {
   ) -> Effect<Action> {
     switch action {
     case .fetchProductData:
-      let mockData = ProductCategory.allCategories
-      return .send(.inner(.updateProductCategories(mockData)))
+      return .run {
+        
+        .send(.inner(.updateProductCategories(mockData)))
+      }
     }
   }
   
