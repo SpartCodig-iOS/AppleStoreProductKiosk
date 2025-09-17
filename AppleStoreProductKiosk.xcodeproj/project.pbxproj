@@ -33,6 +33,7 @@
 				Domain/Entities/Product.swift,
 				Features/Main/Components/CartButton/CartButtonFeature.swift,
 				Features/Main/Feature/ProductListFeature.swift,
+				Features/Main/Feature/ProductListView.swift,
 				Shared/FeatureAction.swift,
 			);
 			target = C8F725EA2E790FA100C2A1DE /* AppleStoreProductKioskTests */;
