@@ -14,10 +14,10 @@ public struct ProductListFeature {
   public struct State: Equatable {
     @Shared var selectedProducts: [Product]
     var productCategories: IdentifiedArrayOf<ProductCategory> = []
-    var currentSelectedCategoryId: String?
+    var currentSelectedCategoryId: String = ""
     var currentItems: IdentifiedArrayOf<Product> {
       guard
-        let currentSelectedCategoryId,
+        !currentSelectedCategoryId.isEmpty,
         let products = productCategories[id: currentSelectedCategoryId]?.products
       else {
         return []
@@ -36,7 +36,8 @@ public struct ProductListFeature {
   }
   
   @CasePathable
-  public enum Action: FeatureAction, ViewAction, Equatable {
+  public enum Action: FeatureAction, ViewAction, Equatable, BindableAction {
+    case binding(BindingAction<State>)
     case view(ViewAction)
     case async(AsyncAction)
     case scope(ScopeAction)
@@ -71,8 +72,12 @@ public struct ProductListFeature {
   }
   
   public var body: some Reducer<State, Action> {
+    BindingReducer()
+    
     Reduce { state, action in
       switch action {
+      case .binding:
+        return .none
       case .view(let action):
         return handleViewAction(state: &state, action: action)
       case .async(let action):
