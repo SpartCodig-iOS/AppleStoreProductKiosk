@@ -6,3 +6,16 @@
 //
 
 import Foundation
+
+class MockProductRepository: ProductInterface {
+  func fetchProductCatalog() async throws -> ProductCatalog {
+    return .init(categories: [])
+  }
+  
+  func fetchProducts(for category: String) async throws -> [Product] {
+    return []
+  }
+  
+
+
+}
