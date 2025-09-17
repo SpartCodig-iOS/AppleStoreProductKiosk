@@ -14,6 +14,13 @@ public struct ProductListFeature {
   public struct State: Equatable {
     var productCategories: IdentifiedArrayOf<ProductCategory> = []
     var currentSelectedCategoryId: String?
+    var currentItems: [Product] {
+      guard let currentSelectedCategoryId else {
+        return []
+      }
+      return productCategories
+        .first(where: { $0.id == currentSelectedCategoryId })?.products ?? []
+    }
     
     var isHiddenCardButton = true
   }
