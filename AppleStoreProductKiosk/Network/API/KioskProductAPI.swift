@@ -7,13 +7,28 @@
 
 import Foundation
 
-enum  KioskProductAPI {
-  case productLists
+// MARK: - KioskAPI Namespace
 
-  var description: String {
-    switch self {
-      case .productLists:
-        return "/products"
+/// Kiosk API의 네임스페이스
+///
+/// Kiosk 관련 API 엔드포인트만을 관리하는 단일 책임을 가집니다.
+enum KioskAPI {
+  
+  // MARK: - Product API
+  
+  /// 상품 관련 API 엔드포인트
+  enum Product: APIEndpoint {
+    case list
+    
+    var basePath: String {
+      return APIDomain.kiosk.basePath
+    }
+    
+    var path: String {
+      switch self {
+        case .list:
+          return "/products"
+      }
     }
   }
 }
