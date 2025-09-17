@@ -12,7 +12,7 @@ public struct ProductListFeature {
   
   @ObservableState
   public struct State: Equatable {
-    @Shared var selectedProduct: [Product]
+    @Shared var selectedProducts: [Product]
     var productCategories: IdentifiedArrayOf<ProductCategory> = []
     var currentSelectedCategoryId: String?
     var currentItems: IdentifiedArrayOf<Product> {
@@ -24,8 +24,15 @@ public struct ProductListFeature {
       }
       return IdentifiedArray(uniqueElements: products)
     }
+    var isHiddenCartButton: Bool {
+      return selectedProducts.isEmpty
+    }
+    var cartButtonState: CartButtonFeature.State
     
-    var isHiddenCardButton = true
+    init(selectedProducts: Shared<[Product]>) {
+      self._selectedProducts = selectedProducts
+      self.cartButtonState = CartButtonFeature.State(selectedProducts: selectedProducts)
+    }
   }
   
   @CasePathable
@@ -49,7 +56,9 @@ public struct ProductListFeature {
     }
     
     @CasePathable
-    public enum ScopeAction: Equatable { }
+    public enum ScopeAction: Equatable {
+      case cardButton(CartButtonFeature.Action)
+    }
     
     @CasePathable
     public enum DelegateAction: Equatable { }
@@ -78,6 +87,10 @@ public struct ProductListFeature {
         return .none
       }
     }
+    
+    Scope(state: \.cartButtonState, action: \.scope.cardButton) {
+      CartButtonFeature()
+    }
   }
 }
 
@@ -93,7 +106,7 @@ extension ProductListFeature {
       return .send(.inner(.updateSelectedCategoryId(categoryId)))
     case .onTapAddItem(let itemId):
       guard let product = state.currentItems[id: itemId] else { return .none }
-      state.$selectedProduct.withLock { $0 = $0 + [product] }
+      state.$selectedProducts.withLock { $0 = $0 + [product] }
       return .none
     }
   }
@@ -113,7 +126,11 @@ extension ProductListFeature {
     state: inout State,
     action: Action.ScopeAction
   ) -> Effect<Action> {
-    return .none
+    switch action {
+    case .cardButton(let action):
+      guard case .view(.onTap) = action else { return .none }
+      return .none
+    }
   }
   
   private func handleDelegateAction(
