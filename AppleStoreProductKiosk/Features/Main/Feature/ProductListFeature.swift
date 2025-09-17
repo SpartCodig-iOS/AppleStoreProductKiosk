@@ -12,14 +12,17 @@ public struct ProductListFeature {
   
   @ObservableState
   public struct State: Equatable {
+    @Shared var selectedProduct: [Product]
     var productCategories: IdentifiedArrayOf<ProductCategory> = []
     var currentSelectedCategoryId: String?
-    var currentItems: [Product] {
-      guard let currentSelectedCategoryId else {
+    var currentItems: IdentifiedArrayOf<Product> {
+      guard
+        let currentSelectedCategoryId,
+        let products = productCategories[id: currentSelectedCategoryId]?.products
+      else {
         return []
       }
-      return productCategories
-        .first(where: { $0.id == currentSelectedCategoryId })?.products ?? []
+      return IdentifiedArray(uniqueElements: products)
     }
     
     var isHiddenCardButton = true
@@ -89,6 +92,8 @@ extension ProductListFeature {
     case .onTapCategory(let categoryId):
       return .send(.inner(.updateSelectedCategoryId(categoryId)))
     case .onTapAddItem(let itemId):
+      guard let product = state.currentItems[id: itemId] else { return .none }
+      state.$selectedProduct.withLock { $0 = $0 + [product] }
       return .none
     }
   }
