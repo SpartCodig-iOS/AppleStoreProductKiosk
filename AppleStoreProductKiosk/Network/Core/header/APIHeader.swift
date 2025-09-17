@@ -20,7 +20,7 @@ extension APIHeader {
   /// 인증 토큰이 필요 없는 기본 헤더
   public static var baseHeader: [String: String] {
     [
-      contentType: APIHeaderManger.contentType
+      contentType: APIHeaderManager.contentType
     ]
   }
 

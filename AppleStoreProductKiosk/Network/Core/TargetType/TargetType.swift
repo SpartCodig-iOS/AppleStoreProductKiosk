@@ -28,3 +28,4 @@ protocol TargetType {
   /// 파라미터 및 인코딩 방식 등 요청 작업
   var task: NetworkTask { get }
 }
+

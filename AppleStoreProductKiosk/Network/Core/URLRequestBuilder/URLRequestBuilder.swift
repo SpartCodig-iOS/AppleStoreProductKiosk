@@ -20,12 +20,11 @@ class URLRequestBuilder {
   /// - Parameter target: 네트워크 요청 정보가 담긴 TargetType
   /// - Returns: 완성된 URLRequest
   static func buildRequest(from target: TargetType) -> URLRequest {
-    // URL 생성 시 불필요한 공백을 제거하기 위한 trim 적용
-    let url = target.baseURL.appendingPathComponent(
-      target.path.trimmingCharacters(in: .whitespaces)
-    )
-    var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-    var request = URLRequest(url: components?.url ?? url)
+    // Base URL과 path를 안전하게 결합 (슬래시 이스케이프 이슈 방지)
+    let base = target.baseURL
+    var components = URLComponents(url: base, resolvingAgainstBaseURL: false)
+    components?.path = target.path.trimmingCharacters(in: .whitespaces)
+    var request = URLRequest(url: components?.url ?? base)
     request.httpMethod = target.method.rawValue
 
     // 헤더 추가

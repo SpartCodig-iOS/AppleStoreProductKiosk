@@ -26,3 +26,4 @@ enum NetworkTask {
     urlParameters: [String: Any]
   )
 }
+
