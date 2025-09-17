@@ -79,10 +79,7 @@ public struct ProductListView: View {
               action: \.scope.cardButton
             )
           )
-          .shadow(color: .black.opacity(0.1), radius: 10, x:
-                    0, y: 5)
-          .shadow(color: .black.opacity(0.05), radius: 1, x:
-                    0, y: 1)
+          .shadow(radius: 8, x: 4, y: 4)
           .padding()
         }
       }
@@ -96,7 +93,11 @@ public struct ProductListView: View {
 
 #Preview {
   let initialSelected = Shared<[Product]>(value: [])
-  return ProductListView(store: Store(initialState: ProductListFeature.State(selectedProducts: initialSelected)) {
-    ProductListFeature()
-  })
+  return ProductListView(
+    store: Store(
+      initialState: ProductListFeature.State(selectedProducts: initialSelected)
+    ) {
+      ProductListFeature()
+    }
+  )
 }

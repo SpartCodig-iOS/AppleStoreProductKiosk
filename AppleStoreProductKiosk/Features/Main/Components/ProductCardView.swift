@@ -9,8 +9,8 @@ import SwiftUI
 
 public struct ProductCardView: View {
   private enum Layout {
-    static let imageHeight: CGFloat = 200
-    static let textAreaHeight: CGFloat = 45
+    static let imageHeight: CGFloat = 120
+    static let textAreaHeight: CGFloat = 55
     static let cornerRadius: CGFloat = 8
     static let cardPadding: CGFloat = 10
     static let buttonPadding: CGFloat = 4
@@ -18,6 +18,7 @@ public struct ProductCardView: View {
   private let id: String
   private let imageURL: URL?
   private let title: String
+  private let subTitle: String
   private let price: Double
   private var onTapAction: ((String) -> Void)?
   
@@ -28,6 +29,7 @@ public struct ProductCardView: View {
     self.id = product.id
     self.imageURL = product.imageURL
     self.title = product.name
+    self.subTitle = product.description
     self.price = product.price
     self.onTapAction = onTapAction
   }
@@ -55,11 +57,18 @@ public struct ProductCardView: View {
       .clipped()
       
       VStack(alignment: .leading, spacing: 8) {
-        Text(title)
-          .font(.headline)
-          .foregroundStyle(Color.primary)
-          .lineLimit(2)
-          .frame(height: Layout.textAreaHeight, alignment: .top)
+        VStack(alignment: .leading, spacing: 4) {
+          Text(title)
+            .font(.headline)
+            .foregroundStyle(Color.primary)
+            .lineLimit(1)
+          
+          Text(subTitle)
+            .font(.system(size: 12, weight: .regular))
+            .foregroundStyle(Color.secondary)
+            .lineLimit(2)
+        }
+        .frame(height: Layout.textAreaHeight, alignment: .leading)
 
         Text(price.formattedKRWCurruncy)
           .font(.system(size: 20, weight: .semibold))

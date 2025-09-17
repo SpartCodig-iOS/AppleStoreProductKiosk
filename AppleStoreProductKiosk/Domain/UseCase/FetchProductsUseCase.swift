@@ -34,9 +34,9 @@ extension DependencyContainer {
 public enum FetchProductsDependencyKey: DependencyKey {
   public static var liveValue: any FetchProductsUseCase = FetchProducts(repository: DefaultProductsRepository())
   
-  public static var testValue: any FetchProductsUseCase = FetchProducts(repository: DefaultProductsRepository())
+  public static var testValue: any FetchProductsUseCase = FetchProducts(repository: MockProductRepository())
   
-  public static var previewValue: any FetchProductsUseCase = FetchProducts(repository: DefaultProductsRepository())
+  public static var previewValue: any FetchProductsUseCase = FetchProducts(repository: MockProductRepository())
 }
 
 public extension DependencyValues {
