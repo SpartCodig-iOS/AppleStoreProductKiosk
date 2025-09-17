@@ -11,35 +11,41 @@ import ComposableArchitecture
 public struct ProductListFeature {
   
   @ObservableState
-  public struct State {
+  public struct State: Equatable {
     var productCategories: IdentifiedArrayOf<ProductCategory> = []
     var currentSelectedCategoryId: String?
     
     var isHiddenCardButton = true
   }
   
-  public enum Action: FeatureAction, ViewAction {
+  @CasePathable
+  public enum Action: FeatureAction, ViewAction, Equatable {
     case view(ViewAction)
     case async(AsyncAction)
     case scope(ScopeAction)
     case delegate(DelegateAction)
     case inner(InnerAction)
     
-    public enum ViewAction {
+    @CasePathable
+    public enum ViewAction: Equatable {
       case onAppear
       case onTapCategory(id: String)
       case onTapAddItem(id: String)
     }
     
-    public enum AsyncAction {
+    @CasePathable
+    public enum AsyncAction: Equatable {
       case fetchProductData
     }
     
-    public enum ScopeAction { }
+    @CasePathable
+    public enum ScopeAction: Equatable { }
     
-    public enum DelegateAction { }
+    @CasePathable
+    public enum DelegateAction: Equatable { }
     
-    public enum InnerAction {
+    @CasePathable
+    public enum InnerAction: Equatable {
       case updateProductCategories([ProductCategory])
       case updateSelectedCategoryId(String)
     }

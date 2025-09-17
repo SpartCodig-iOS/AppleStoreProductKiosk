@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - 제품 엔티티
-public struct Product: Identifiable {
+public struct Product: Identifiable, Equatable {
   public let id: String
   public let name: String
   public let price: Double
@@ -28,7 +28,7 @@ public struct Product: Identifiable {
 }
 
 // MARK: - 카테고리 엔티티
-public struct ProductCategory: Identifiable {
+public struct ProductCategory: Identifiable, Equatable {
   public let id: String
   public let name: String
   public let products: [Product]
