@@ -38,7 +38,7 @@
 		7F41C5542E798756007C4017 /* Exceptions for "AppleStoreProductKiosk" folder in "AppleStoreProductKiosk" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Resources/Info.plist,
+				App/Resources/Info.plist,
 			);
 			target = C8F725DD2E790F9F00C2A1DE /* AppleStoreProductKiosk */;
 		};
@@ -428,7 +428,7 @@
 				DEVELOPMENT_TEAM = N94CS4N6VR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = AppleStoreProductKiosk/Resources/Info.plist;
+				INFOPLIST_FILE = AppleStoreProductKiosk/App/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -462,7 +462,7 @@
 				DEVELOPMENT_TEAM = N94CS4N6VR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = AppleStoreProductKiosk/Resources/Info.plist;
+				INFOPLIST_FILE = AppleStoreProductKiosk/App/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

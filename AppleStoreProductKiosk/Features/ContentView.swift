@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 struct ContentView: View {
+  @Perception.Bindable var store: StoreOf<ProductListFeature>
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -16,9 +18,12 @@ struct ContentView: View {
             Text("Hello, world!")
         }
         .padding()
+        .onAppear {
+          store.send(.view(.onAppear))
+        }
     }
 }
 
-#Preview {
-    ContentView()
-}
+//#Preview {
+//    ContentView()
+//}
