@@ -18,7 +18,7 @@ struct ProductListFeatureTests {
     let initialSelected = Shared<[Product]>(value: [])
     let store = TestStore(
       initialState: ProductListFeature.State(
-        selectedProduct: initialSelected
+        selectedProducts: initialSelected
       )
     ) {
       ProductListFeature()
@@ -43,7 +43,7 @@ struct ProductListFeatureTests {
     let initialSelected = Shared<[Product]>(value: [])
     let store = TestStore(
       initialState: ProductListFeature.State(
-        selectedProduct: initialSelected
+        selectedProducts: initialSelected
       )
     ) {
       ProductListFeature()
@@ -68,7 +68,7 @@ struct ProductListFeatureTests {
     let initialSelected = Shared<[Product]>(value: [])
     let store = TestStore(
       initialState: ProductListFeature.State(
-        selectedProduct: initialSelected
+        selectedProducts: initialSelected
       )
     ) {
       ProductListFeature()
@@ -86,7 +86,7 @@ struct ProductListFeatureTests {
     await store.send(.view(.onTapAddItem(id: firstItemId))) {
       // 상태 스냅샷 기반 검증
       let expected = [ProductCategory.allCategories.first!.products.first!]
-      $0.$selectedProduct.withLock { $0 = expected }
+      $0.$selectedProducts.withLock { $0 = expected }
     }
   }
   
@@ -95,7 +95,7 @@ struct ProductListFeatureTests {
     let initialSelected = Shared<[Product]>(value: [])
     let store = TestStore(
       initialState: ProductListFeature.State(
-        selectedProduct: initialSelected
+        selectedProducts: initialSelected
       )
     ) {
       ProductListFeature()
@@ -111,10 +111,45 @@ struct ProductListFeatureTests {
     let p2 = firstCategory.products[1]
     
     await store.send(.view(.onTapAddItem(id: p1.id))) {
-      $0.$selectedProduct.withLock { $0 = [p1] }
+      $0.$selectedProducts.withLock { $0 = [p1] }
     }
     await store.send(.view(.onTapAddItem(id: p2.id))) {
-      $0.$selectedProduct.withLock { $0 = [p1, p2] }
+      $0.$selectedProducts.withLock { $0 = [p1, p2] }
+    }
+  }
+}
+
+
+@MainActor
+struct ProductList_CartButton_SharedIntegrationTests {
+  // 부모에서 아이템 추가 → 자식의 totalPrice에 즉시 반영
+  @Test
+  func parentAddsItem_childTotalPriceUpdates() async {
+    // 1) 초기 상태 구성: Shared 주입 및 자식 생성
+    let shared = Shared<[Product]>(value: [])
+    let initial = ProductListFeature.State(
+      selectedProducts: shared
+    )
+    let store = TestStore(initialState: initial) { ProductListFeature() }
+
+    // 2) 데이터 로드로 현재 카테고리/아이템 확보
+    await store.send(.view(.onAppear))
+    await store.receive(\.async.fetchProductData)
+    await store.receive(\.inner.updateProductCategories) {
+      $0.productCategories = IdentifiedArray(uniqueElements: ProductCategory.allCategories)
+    }
+    let firstCategory = ProductCategory.allCategories.first!
+    await store.receive(\.inner.updateSelectedCategoryId) {
+      $0.currentSelectedCategoryId = firstCategory.id
+    }
+
+    // 3) 부모 액션으로 아이템 추가
+    let p1 = firstCategory.products.first!
+    await store.send(.view(.onTapAddItem(id: p1.id))) {
+      // 공유 상태가 [p1]로 바뀐다
+      $0.$selectedProducts.withLock { $0 = [p1] }
+      // 자식은 Shared를 읽기만 해도 totalPrice가 반영되어야 함
+      #expect($0.cartButtonState.totalPrice == p1.price)
     }
   }
 }
