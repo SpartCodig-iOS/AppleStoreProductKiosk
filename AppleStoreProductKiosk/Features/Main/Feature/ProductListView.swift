@@ -60,7 +60,9 @@ public struct ProductListView: View {
             spacing: 16
           ) {
             ForEach(store.currentItems) { product in
-              ProductCardView(product: product)
+              ProductCardView(product: product) { id in
+                send(.onTapAddItem(id: id))
+              }
             }
           }
           .padding(8)
@@ -68,6 +70,21 @@ public struct ProductListView: View {
           Spacer()
         }
         .scrollIndicators(.hidden)
+      }
+      .safeAreaInset(edge: .bottom) {
+        if !store.isHiddenCartButton {
+          CartButtonView(
+            store: store.scope(
+              state: \.cartButtonState,
+              action: \.scope.cardButton
+            )
+          )
+          .shadow(color: .black.opacity(0.1), radius: 10, x:
+                    0, y: 5)
+          .shadow(color: .black.opacity(0.05), radius: 1, x:
+                    0, y: 1)
+          .padding()
+        }
       }
       .onAppear {
         send(.onAppear)

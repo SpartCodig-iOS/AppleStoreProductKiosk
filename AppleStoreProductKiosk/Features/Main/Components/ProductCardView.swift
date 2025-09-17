@@ -15,14 +15,21 @@ public struct ProductCardView: View {
     static let cardPadding: CGFloat = 10
     static let buttonPadding: CGFloat = 4
   }
+  private let id: String
   private let imageURL: URL?
   private let title: String
   private let price: Double
+  private var onTapAction: ((String) -> Void)?
   
-  public init(product: Product) {
+  public init(
+    product: Product,
+    onTapAction: ((String) -> Void)? = nil
+  ) {
+    self.id = product.id
     self.imageURL = product.imageURL
     self.title = product.name
     self.price = product.price
+    self.onTapAction = onTapAction
   }
   
   public var body: some View {
@@ -54,13 +61,13 @@ public struct ProductCardView: View {
           .lineLimit(2)
           .frame(height: Layout.textAreaHeight, alignment: .top)
 
-        Text(formatCurrency(amount: price))
+        Text(price.formattedKRWCurruncy)
           .font(.system(size: 20, weight: .semibold))
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       
       Button {
-        
+        onTapAction?(self.id)
       } label: {
         Text("담기")
           .foregroundStyle(Color.white)
@@ -76,18 +83,6 @@ public struct ProductCardView: View {
     .background(Color.white)
     .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius))
     .shadow(radius: 0.5)
-  }
-  
-  private static let currencyFormatter: NumberFormatter = {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .currency
-    formatter.locale = Locale(identifier: "ko_KR")
-    formatter.maximumFractionDigits = 0
-    return formatter
-  }()
-
-  private func formatCurrency(amount: Double) -> String {
-    Self.currencyFormatter.string(from: NSNumber(value: amount)) ?? ""
   }
 }
 
