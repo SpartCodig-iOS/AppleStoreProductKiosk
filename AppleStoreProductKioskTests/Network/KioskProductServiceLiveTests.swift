@@ -2,7 +2,7 @@
 //  KioskProductServiceLiveTests.swift
 //  AppleStoreProductKioskTests
 //
-//  Live API integration tests hitting the real endpoint.
+//  Created by Wonji Suh  on 9/17/25.
 //
 
 import Testing

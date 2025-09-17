@@ -2,7 +2,7 @@
 //  ProductUseCaseImplTests.swift
 //  AppleStoreProductKioskTests
 //
-//  Created by Codex CLI on 9/17/25.
+//  Created by Wonji Suh  on 9/17/25.
 //
 
 import Testing
