@@ -73,7 +73,7 @@ public struct ProductListFeature {
     public enum InnerAction: Equatable {
       case updateProductCategories([ProductCategory])
       case updateSelectedCategoryId(String)
-      case showErrorAlert
+      case showErrorAlert(message: String)
     }
 
     @CasePathable
@@ -146,7 +146,8 @@ extension ProductListFeature {
           let products = try await fetchProducts.execute()
           await send(.inner(.updateProductCategories(products)))
         } catch {
-          await send(.inner(.showErrorAlert))
+          let errorMessage = error.localizedDescription
+          await send(.inner(.showErrorAlert(message: errorMessage)))
         }
       }
     }
@@ -181,9 +182,9 @@ extension ProductListFeature {
     case .updateSelectedCategoryId(let id):
       state.currentSelectedCategoryId = id
       return .none
-    case .showErrorAlert:
+    case .showErrorAlert(let message):
       state.alert = AlertState {
-        TextState("네트워크 오류")
+        TextState("오류")
       } actions: {
         ButtonState(action: .confirmRetry) {
           TextState("다시 시도")
@@ -192,7 +193,7 @@ extension ProductListFeature {
           TextState("취소")
         }
       } message: {
-        TextState("상품 정보를 불러올 수 없습니다. 다시 시도해주세요.")
+        TextState(message)
       }
       return .none
     }
