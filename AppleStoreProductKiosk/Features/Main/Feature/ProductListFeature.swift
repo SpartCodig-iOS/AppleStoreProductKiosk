@@ -19,17 +19,13 @@ import LogMacro
 
      init() {}
     var productCatalogModel : ProductCatalog? = nil
-
-
-
   }
 
-   enum Action: ViewAction, BindableAction {
-    case binding(BindingAction<State>)
+  @CasePathable
+   enum Action: ViewAction {
     case view(View)
     case async(AsyncAction)
     case inner(InnerAction)
-    case navigation(NavigationAction)
 
   }
 
@@ -37,39 +33,36 @@ import LogMacro
   @CasePathable
    enum View {
     case onTapAddProduct(id: String)
+    case onSelectCategory(String)
      case onAppear
   }
 
 
 
   //MARK: - AsyncAction 비동기 처리 액션
+  @CasePathable
    enum AsyncAction: Equatable {
     case fetchProductCatalog
+    case fetchProducts(String)
 
   }
 
   //MARK: - 앱내에서 사용하는 액션
+  @CasePathable
    enum InnerAction: Equatable {
     case fetchProductCatalogResponse(Result<ProductCatalog, DataError>)
+    case fetchProductsResponse(category: String, Result<[Product], DataError>)
   }
 
-  //MARK: - NavigationAction
-   enum NavigationAction: Equatable {
-
-
-  }
 
   private struct ProductListCancel: Hashable {}
 
   @Dependency(\.productUseCase) var productUseCase
+   @Dependency(\.mainQueue) var mainQueue
 
    var body: some ReducerOf<Self> {
-    BindingReducer()
     Reduce { state, action in
       switch action {
-        case .binding(_):
-          return .none
-
         case .view(let viewAction):
           return handleViewAction(state: &state, action: viewAction)
 
@@ -79,8 +72,6 @@ import LogMacro
         case .inner(let innerAction):
           return handleInnerAction(state: &state, action: innerAction)
 
-        case .navigation(let navigationAction):
-          return handleNavigationAction(state: &state, action: navigationAction)
       }
     }
   }
@@ -96,6 +87,12 @@ import LogMacro
       case .onAppear:
         return .run  { send in
           await send(.async(.fetchProductCatalog))
+        }
+        .debounce(id: ProductListCancel(), for: 0.3, scheduler: mainQueue)
+
+      case .onSelectCategory(let category):
+        return .run { send in
+          await send(.async(.fetchProducts(category)))
         }
 
     }
@@ -122,14 +119,19 @@ import LogMacro
 
         }
 
-    }
-  }
+      case .fetchProducts(let category):
+        return .run { send in
+          let result = await Result {
+            try await productUseCase.fetchProducts(for: category)
+          }
 
-  private func handleNavigationAction(
-    state: inout State,
-    action: NavigationAction
-  ) -> Effect<Action> {
-    switch action {
+          switch result {
+            case .success(let products):
+              await send(.inner(.fetchProductsResponse(category: category, .success(products))))
+            case .failure(let error):
+              await send(.inner(.fetchProductsResponse(category: category, .failure(.decodingError(error)))))
+          }
+        }
 
     }
   }
@@ -151,7 +153,18 @@ import LogMacro
         }
         return .none
 
+      case .fetchProductsResponse(let category, let result):
+        switch result {
+          case .success(let products):
+            state.productCatalogModel = ProductCatalog(categories: [
+              Category(name: category, products: products)
+            ])
+            #logDebug("상품 로드 완료: \(category)", products)
+          case .failure(let error):
+            #logNetwork("상품 로드 실패: \(category)", error.localizedDescription)
+        }
+        return .none
+
     }
   }
 }
-

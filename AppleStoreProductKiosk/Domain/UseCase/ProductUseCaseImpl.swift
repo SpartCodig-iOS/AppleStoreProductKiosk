@@ -41,6 +41,7 @@ extension ProductUseCaseImpl: DependencyKey {
     }
     return ProductUseCaseImpl(repository: repository)
   }
+  static var testValue: ProductInterface = MockProductRepository()
 }
 
 extension DependencyValues {
