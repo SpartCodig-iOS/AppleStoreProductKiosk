@@ -10,32 +10,27 @@ import Foundation
 
 
 enum KioskProductService {
-  case proudctList
+  case getAllProducts
 }
 
-
 extension KioskProductService: BaseTargetType {
-  var domain: KioskProductDomain {
-    return .producut
-  }
-
-  var urlPath: String {
+  var endpoint: any APIEndpoint {
     switch self {
-      case .proudctList:
-        return KioskProductAPI.productLists.description
+      case .getAllProducts:
+        return KioskAPI.Product.list
     }
   }
-
+  
   var parameters: [String : Any]? {
     switch self {
-      case .proudctList:
+      case .getAllProducts:
         return nil
     }
   }
-
+  
   var method: HTTPMethod {
     switch self {
-      case .proudctList:
+      case .getAllProducts:
         return .get
     }
   }
