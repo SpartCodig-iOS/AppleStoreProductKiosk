@@ -6,3 +6,14 @@
 //
 
 import Foundation
+
+import DiContainer
+
+extension ModuleFactoryManager {
+      mutating func registerDefaultDependencies() {
+          // Repository
+        repositoryFactory.registerDefaultDefinitions()
+
+        useCaseFactory.registerDefaultDefinitions()
+      }
+  }

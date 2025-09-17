@@ -6,3 +6,17 @@
 //
 
 import Foundation
+
+import DiContainer
+
+extension RepositoryModuleFactory {
+  public mutating func registerDefaultDefinitions() {
+    let register = registerModule
+
+    definitions = {
+      return [
+        register.productRepositoryImplModule
+      ]
+    }()
+  }
+}

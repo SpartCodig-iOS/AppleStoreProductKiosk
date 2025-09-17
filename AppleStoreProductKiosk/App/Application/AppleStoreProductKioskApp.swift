@@ -6,12 +6,21 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct AppleStoreProductKioskApp: App {
+  @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+          let store = Store(initialState: AppReducer.State()) {
+            AppReducer()
+              ._printChanges()
+              ._printChanges(.actionLabels)
+          }
+
+          AppView(store: store)
         }
     }
 }

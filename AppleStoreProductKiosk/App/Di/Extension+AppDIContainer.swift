@@ -6,3 +6,17 @@
 //
 
 import Foundation
+import DiContainer
+
+extension AppDIContainer {
+  func registerDefaultDependencies() async {
+    await registerDependencies { container in
+      // Repository 먼저 등록
+      let factory = ModuleFactoryManager()
+
+      await factory.registerAll(to: container)
+
+    }
+  }
+}
+
