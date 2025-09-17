@@ -6,9 +6,23 @@
 //
 
 import Foundation
+import DiContainer
 
 public struct DefaultProductsRepository: ProductsRepository {
-  public func fetchProducts() -> [ProductCategory] {
-    return ProductCategory.allCategories
+  private let provider = AsyncProvider<KioskProductService>(session: .shared)
+  
+  public func fetchProducts() async throws -> [ProductCategory] {
+    try await provider.requestAsync(
+      .getAllProducts,
+      decodeTo: AppleStoreResponseDTO.self
+    ).toDomain()
+  }
+}
+
+extension RegisterModule {
+  var productsRepositoryModule: () -> Module {
+    makeDependencyImproved(ProductsRepository.self) {
+      DefaultProductsRepository()
+    }
   }
 }

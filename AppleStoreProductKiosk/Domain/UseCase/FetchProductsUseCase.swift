@@ -7,6 +7,7 @@
 
 import Foundation
 import Dependencies
+import DiContainer
 
 public protocol FetchProductsUseCase {
   func execute() async throws -> [ProductCategory]
@@ -24,17 +25,43 @@ public struct FetchProducts: FetchProductsUseCase {
   }
 }
 
+extension DependencyContainer {
+  var fetchProducts: FetchProductsUseCase? {
+    resolve(FetchProductsUseCase.self)
+  }
+}
+
 public enum FetchProductsDependencyKey: DependencyKey {
-    public static var liveValue: any FetchProductsUseCase = FetchProducts(repository: DefaultProductsRepository())
-    
-    public static var testValue: any FetchProductsUseCase = FetchProducts(repository: DefaultProductsRepository())
-    
-    public static var previewValue: any FetchProductsUseCase = FetchProducts(repository: DefaultProductsRepository())
+  public static var liveValue: any FetchProductsUseCase = FetchProducts(repository: DefaultProductsRepository())
+  
+  public static var testValue: any FetchProductsUseCase = FetchProducts(repository: DefaultProductsRepository())
+  
+  public static var previewValue: any FetchProductsUseCase = FetchProducts(repository: DefaultProductsRepository())
 }
 
 public extension DependencyValues {
-    var fetchProductsUseCase: any FetchProductsUseCase {
-        get { self[FetchProductsDependencyKey.self] }
-        set { self[FetchProductsDependencyKey.self] = newValue }
-    }
+  var fetchProductsUseCase: any FetchProductsUseCase {
+    get { self[FetchProductsDependencyKey.self] }
+    set { self[FetchProductsDependencyKey.self] = newValue }
+  }
+}
+
+class MockProductRepository: ProductsRepository {
+  func fetchProducts() async throws -> [ProductCategory] {
+    return ProductCategory.allCategories
+  }
+}
+
+
+extension RegisterModule {
+  var productUseCaseImplModule: () -> Module {
+    makeUseCaseWithRepository(
+      FetchProductsUseCase.self,
+      repositoryProtocol: ProductsRepository.self,
+      repositoryFallback: MockProductRepository(),
+      factory: { repository in
+        FetchProducts(repository: repository)
+      }
+    )
+  }
 }

@@ -124,9 +124,14 @@ extension ProductListFeature {
   ) -> Effect<Action> {
     switch action {
     case .fetchProductData:
-      return .run {
-        
-        .send(.inner(.updateProductCategories(mockData)))
+      return .run { send in
+        do {
+          let products = try await fetchProducts.execute()
+          await send(.inner(.updateProductCategories(products)))
+        } catch {
+          //TODO: - 에러처리
+          return
+        }
       }
     }
   }

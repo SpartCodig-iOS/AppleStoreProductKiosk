@@ -40,12 +40,20 @@
 			);
 			target = C8F725EA2E790FA100C2A1DE /* AppleStoreProductKioskTests */;
 		};
+		C8172F562E7AE2B70071E68E /* Exceptions for "AppleStoreProductKiosk" folder in "AppleStoreProductKiosk" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Info.plist,
+			);
+			target = C8F725DD2E790F9F00C2A1DE /* AppleStoreProductKiosk */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C8F725E02E790F9F00C2A1DE /* AppleStoreProductKiosk */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				C8172F562E7AE2B70071E68E /* Exceptions for "AppleStoreProductKiosk" folder in "AppleStoreProductKiosk" target */,
 				C8172C852E7A88400071E68E /* Exceptions for "AppleStoreProductKiosk" folder in "AppleStoreProductKioskTests" target */,
 			);
 			path = AppleStoreProductKiosk;
