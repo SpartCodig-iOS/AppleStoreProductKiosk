@@ -8,6 +8,7 @@
 import Foundation
 
 /// 네트워크 및 데이터 처리 과정에서 발생할 수 있는 오류를 정의한 enum입니다.
+// NOTE: Moved to Network/Core/Errors to avoid Infra -> Data reverse dependency.
 enum DataError: Error, LocalizedError, Sendable {
   /// 데이터가 없음
   case noData
