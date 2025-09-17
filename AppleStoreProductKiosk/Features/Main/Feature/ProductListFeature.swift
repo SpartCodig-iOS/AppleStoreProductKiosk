@@ -13,6 +13,9 @@ public struct ProductListFeature {
   @ObservableState
   public struct State {
     var productCategories: IdentifiedArrayOf<ProductCategory> = []
+    var currentSelectedCategoryId: String?
+    
+    var isHiddenCardButton = true
   }
   
   public enum Action: FeatureAction, ViewAction {
@@ -22,15 +25,24 @@ public struct ProductListFeature {
     case delegate(DelegateAction)
     case inner(InnerAction)
     
-    public enum ViewAction { }
+    public enum ViewAction {
+      case onAppear
+      case onTapCategory(id: String)
+      case onTapAddItem(id: String)
+    }
     
-    public enum AsyncAction { }
+    public enum AsyncAction {
+      case fetchProductData
+    }
     
     public enum ScopeAction { }
     
     public enum DelegateAction { }
     
-    public enum InnerAction { }
+    public enum InnerAction {
+      case updateProductCategories([ProductCategory])
+      case updateSelectedCategoryId(String)
+    }
   }
   
   public var body: some Reducer<State, Action> {
@@ -58,14 +70,25 @@ extension ProductListFeature {
     state: inout State,
     action: Action.ViewAction
   ) -> Effect<Action> {
-    return .none
+    switch action {
+    case .onAppear:
+      return .send(.async(.fetchProductData))
+    case .onTapCategory(let categoryId):
+      return .send(.inner(.updateSelectedCategoryId(categoryId)))
+    case .onTapAddItem(let itemId):
+      return .none
+    }
   }
   
   private func handleAsyncAction(
     state: inout State,
     action: Action.AsyncAction
   ) -> Effect<Action> {
-    return .none
+    switch action {
+    case .fetchProductData:
+      let mockData = ProductCategory.allCategories
+      return .send(.inner(.updateProductCategories(mockData)))
+    }
   }
   
   private func handleScopeAction(
@@ -86,6 +109,13 @@ extension ProductListFeature {
     state: inout State,
     action: Action.InnerAction
   ) -> Effect<Action> {
-    return .none
+    switch action {
+    case .updateProductCategories(let categories):
+      state.productCategories = IdentifiedArray(uniqueElements: categories)
+      return .send(.inner(.updateSelectedCategoryId(categories.first?.id ?? "")))
+    case .updateSelectedCategoryId(let id):
+      state.currentSelectedCategoryId = id
+      return .none
+    }
   }
 }
