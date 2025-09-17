@@ -30,7 +30,9 @@ public struct ProductListFeature {
       return selectedProducts.isEmpty
     }
     var cartButtonState: CartButtonFeature.State
-    
+
+    @Presents var alert: AlertState<Action.Alert>?
+
     init(selectedProducts: Shared<[Product]>) {
       self._selectedProducts = selectedProducts
       self.cartButtonState = CartButtonFeature.State(selectedProducts: selectedProducts)
@@ -51,6 +53,7 @@ public struct ProductListFeature {
       case onAppear
       case onTapCategory(id: String)
       case onTapAddItem(id: String)
+      case alert(PresentationAction<Alert>)
     }
     
     @CasePathable
@@ -70,12 +73,19 @@ public struct ProductListFeature {
     public enum InnerAction: Equatable {
       case updateProductCategories([ProductCategory])
       case updateSelectedCategoryId(String)
+      case showErrorAlert
+    }
+
+    @CasePathable
+    public enum Alert: Equatable {
+      case confirmRetry
+      case dismiss
     }
   }
   
   public var body: some Reducer<State, Action> {
     BindingReducer()
-    
+
     Reduce { state, action in
       switch action {
       case .binding:
@@ -94,7 +104,8 @@ public struct ProductListFeature {
         return .none
       }
     }
-    
+    .ifLet(\.$alert, action: \.view.alert)
+
     Scope(state: \.cartButtonState, action: \.scope.cardButton) {
       CartButtonFeature()
     }
@@ -115,6 +126,12 @@ extension ProductListFeature {
       guard let product = state.currentItems[id: itemId] else { return .none }
       state.$selectedProducts.withLock { $0 = $0 + [product] }
       return .none
+    case .alert(.presented(.confirmRetry)):
+      return .send(.async(.fetchProductData))
+    case .alert(.presented(.dismiss)):
+      return .none
+    case .alert(.dismiss):
+      return .none
     }
   }
   
@@ -129,8 +146,7 @@ extension ProductListFeature {
           let products = try await fetchProducts.execute()
           await send(.inner(.updateProductCategories(products)))
         } catch {
-          //TODO: - 에러처리
-          return
+          await send(.inner(.showErrorAlert))
         }
       }
     }
@@ -164,6 +180,20 @@ extension ProductListFeature {
       return .send(.inner(.updateSelectedCategoryId(categories.first?.id ?? "")))
     case .updateSelectedCategoryId(let id):
       state.currentSelectedCategoryId = id
+      return .none
+    case .showErrorAlert:
+      state.alert = AlertState {
+        TextState("네트워크 오류")
+      } actions: {
+        ButtonState(action: .confirmRetry) {
+          TextState("다시 시도")
+        }
+        ButtonState(role: .cancel, action: .dismiss) {
+          TextState("취소")
+        }
+      } message: {
+        TextState("상품 정보를 불러올 수 없습니다. 다시 시도해주세요.")
+      }
       return .none
     }
   }

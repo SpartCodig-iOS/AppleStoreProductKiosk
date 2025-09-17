@@ -89,6 +89,7 @@ public struct ProductListView: View {
       .onAppear {
         send(.onAppear)
       }
+      .alert($store.scope(state: \.alert, action: \.view.alert))
     }
   }
 }
