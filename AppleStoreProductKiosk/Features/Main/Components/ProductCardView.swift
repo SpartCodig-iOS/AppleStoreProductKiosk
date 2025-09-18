@@ -9,27 +9,29 @@ import SwiftUI
 
 public struct ProductCardView: View {
   private enum Layout {
-    static let imageHeight: CGFloat = 200
+    static let imageHeight: CGFloat = 120
     static let textAreaHeight: CGFloat = 55
-    static let cornerRadius: CGFloat = 12
-    static let cardPadding: CGFloat = 16
-    static let buttonPadding: CGFloat = 8
+    static let cornerRadius: CGFloat = 8
+    static let cardPadding: CGFloat = 10
+    static let buttonPadding: CGFloat = 4
   }
+  private let id: String
   private let imageURL: URL?
   private let title: String
   private let subTitle: String
   private let price: Double
+  private var onTapAction: ((String) -> Void)?
   
   public init(
-    imageURL: URL?,
-    title: String,
-    subTitle: String,
-    price: Double
+    product: Product,
+    onTapAction: ((String) -> Void)? = nil
   ) {
-    self.imageURL = imageURL
-    self.title = title
-    self.subTitle = subTitle
-    self.price = price
+    self.id = product.id
+    self.imageURL = product.imageURL
+    self.title = product.name
+    self.subTitle = product.description
+    self.price = product.price
+    self.onTapAction = onTapAction
   }
   
   public var body: some View {
@@ -41,6 +43,11 @@ public struct ProductCardView: View {
       } placeholder: {
         Rectangle()
           .fill(Color.gray.opacity(0.2))
+          .clipShape(
+            RoundedRectangle(
+              cornerRadius: Layout.cornerRadius
+            )
+          )
           .overlay(
             ProgressView()
               .scaleEffect(0.8)
@@ -55,21 +62,21 @@ public struct ProductCardView: View {
             .font(.headline)
             .foregroundStyle(Color.primary)
             .lineLimit(1)
-
+          
           Text(subTitle)
-            .font(.caption)
+            .font(.system(size: 12, weight: .regular))
             .foregroundStyle(Color.secondary)
             .lineLimit(2)
         }
-        .frame(height: Layout.textAreaHeight, alignment: .top)
+        .frame(height: Layout.textAreaHeight, alignment: .leading)
 
-        Text(formatCurrency(amount: price))
+        Text(price.formattedKRWCurruncy)
           .font(.system(size: 20, weight: .semibold))
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       
       Button {
-        
+        onTapAction?(self.id)
       } label: {
         Text("담기")
           .foregroundStyle(Color.white)
@@ -82,54 +89,31 @@ public struct ProductCardView: View {
       .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius))
     }
     .padding(Layout.cardPadding)
-  }
-  
-  private static let currencyFormatter: NumberFormatter = {
-    let formatter = NumberFormatter()
-    formatter.numberStyle = .currency
-    formatter.locale = Locale(identifier: "ko_KR")
-    formatter.maximumFractionDigits = 0
-    return formatter
-  }()
-
-  private func formatCurrency(amount: Double) -> String {
-    Self.currencyFormatter.string(from: NSNumber(value: amount)) ?? ""
+    .background(Color.white)
+    .clipShape(RoundedRectangle(cornerRadius: Layout.cornerRadius))
+    .shadow(radius: 0.5)
   }
 }
 
 #Preview {
-  let sampleImageURL = URL(string: "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/iphone-compare-iphone-17-pro-202509?fmt=jpeg&hei=320&qlt=85&wid=250")
-
   VStack(spacing: 16) {
     HStack(spacing: 16) {
       ProductCardView(
-        imageURL: sampleImageURL,
-        title: "MacBook Pro 16",
-        subTitle: "M3 Pro 칩이 탑재된 프로 노트북 긴 텍스트 테스트용 매우 긴 설명입니다",
-        price: 3199000
+        product: Product.AirPods4
       )
 
       ProductCardView(
-        imageURL: sampleImageURL,
-        title: "MacBook Pro 15",
-        subTitle: "놀랍도록 얇고 가벼운 노트북",
-        price: 2599000
+        product: Product.AppleWatchSE3
       )
     }
 
     HStack(spacing: 16) {
       ProductCardView(
-        imageURL: sampleImageURL,
-        title: "iPhone 15 Pro",
-        subTitle: "티타늄 소재의 프로 모델",
-        price: 1550000
+        product: Product.AppleWatchSeries11
       )
 
       ProductCardView(
-        imageURL: sampleImageURL,
-        title: "iPad Air",
-        subTitle: "M2 칩 탑재 매우 긴 제품 설명 텍스트로 레이아웃 테스트를 진행합니다",
-        price: 899000
+        product: Product.AppleVisionPro
       )
     }
   }

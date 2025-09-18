@@ -8,71 +8,197 @@
 import Foundation
 import ComposableArchitecture
 
+
 import LogMacro
-
 @Reducer
- struct ProductListFeature {
-  public init() {}
-
+public struct ProductListFeature {
+  
+  @Dependency(\.fetchProductsUseCase) var fetchProducts
+  
   @ObservableState
-   struct State: Equatable {
+  public struct State: Equatable {
+    @Shared var selectedProducts: [Product]
+    var productCategories: IdentifiedArrayOf<ProductCategory> = []
+    var currentSelectedCategoryId: String = ""
+    var currentItems: IdentifiedArrayOf<Product> {
+      guard
+        !currentSelectedCategoryId.isEmpty,
+        let products = productCategories[id: currentSelectedCategoryId]?.products
+      else {
+        return []
+      }
+      return IdentifiedArray(uniqueElements: products)
+    }
+    var isHiddenCartButton: Bool {
+      return selectedProducts.isEmpty
+    }
+    var cartButtonState: CartButtonFeature.State
 
-     init() {}
-    var productCatalogModel : ProductCatalog? = nil
+    @Presents var alert: AlertState<Action.Alert>?
+
+    init(selectedProducts: Shared<[Product]>) {
+      self._selectedProducts = selectedProducts
+      self.cartButtonState = CartButtonFeature.State(selectedProducts: selectedProducts)
+    }
   }
-
+  
   @CasePathable
-   enum Action: ViewAction {
-    case view(View)
+  public enum Action: FeatureAction, ViewAction, Equatable, BindableAction {
+    case binding(BindingAction<State>)
+    case view(ViewAction)
     case async(AsyncAction)
+    case scope(ScopeAction)
+    case delegate(DelegateAction)
     case inner(InnerAction)
+    
+    @CasePathable
+    public enum ViewAction: Equatable {
+      case onAppear
+      case onTapCategory(id: String)
+      case onTapAddItem(id: String)
+      case alert(PresentationAction<Alert>)
+    }
+    
+    @CasePathable
+    public enum AsyncAction: Equatable {
+      case fetchProductData
+    }
+    
+    @CasePathable
+    public enum ScopeAction: Equatable {
+      case cardButton(CartButtonFeature.Action)
+    }
+    
+    @CasePathable
+    public enum DelegateAction: Equatable { }
+    
+    @CasePathable
+    public enum InnerAction: Equatable {
+      case updateProductCategories([ProductCategory])
+      case updateSelectedCategoryId(String)
+      case showErrorAlert(message: String)
+    }
 
+    @CasePathable
+    public enum Alert: Equatable {
+      case confirmRetry
+      case dismiss
+    }
   }
+  
+  public var body: some Reducer<State, Action> {
+    BindingReducer()
 
-  //MARK: - ViewAction
-  @CasePathable
-   enum View {
-    case onTapAddProduct(id: String)
-    case onSelectCategory(String)
-     case onAppear
-  }
-
-
-
-  //MARK: - AsyncAction 비동기 처리 액션
-  @CasePathable
-   enum AsyncAction: Equatable {
-    case fetchProductCatalog
-    case fetchProducts(String)
-
-  }
-
-  //MARK: - 앱내에서 사용하는 액션
-  @CasePathable
-   enum InnerAction: Equatable {
-    case fetchProductCatalogResponse(Result<ProductCatalog, DataError>)
-    case fetchProductsResponse(category: String, Result<[Product], DataError>)
-  }
-
-
-  private struct ProductListCancel: Hashable {}
-
-  @Dependency(\.productUseCase) var productUseCase
-   @Dependency(\.mainQueue) var mainQueue
-
-   var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
-        case .view(let viewAction):
-          return handleViewAction(state: &state, action: viewAction)
-
-        case .async(let asyncAction):
-          return handleAsyncAction(state: &state, action: asyncAction)
-
-        case .inner(let innerAction):
-          return handleInnerAction(state: &state, action: innerAction)
-
+      case .binding:
+        return .none
+      case .view(let action):
+        return handleViewAction(state: &state, action: action)
+      case .async(let action):
+        return handleAsyncAction(state: &state, action: action)
+      case .scope(let action):
+        return handleScopeAction(state: &state, action: action)
+      case .delegate(let action):
+        return handleDelegateAction(state: &state, action: action)
+      case .inner(let action):
+        return handleInnerAction(state: &state, action: action)
+      @unknown default:
+        return .none
       }
+    }
+    .ifLet(\.$alert, action: \.view.alert)
+
+    Scope(state: \.cartButtonState, action: \.scope.cardButton) {
+      CartButtonFeature()
+    }
+  }
+}
+
+extension ProductListFeature {
+  private func handleViewAction(
+    state: inout State,
+    action: Action.ViewAction
+  ) -> Effect<Action> {
+    switch action {
+    case .onAppear:
+      return .send(.async(.fetchProductData))
+    case .onTapCategory(let categoryId):
+      return .send(.inner(.updateSelectedCategoryId(categoryId)))
+    case .onTapAddItem(let itemId):
+      guard let product = state.currentItems[id: itemId] else { return .none }
+      state.$selectedProducts.withLock { $0 = $0 + [product] }
+      return .none
+    case .alert(.presented(.confirmRetry)):
+      return .send(.async(.fetchProductData))
+    case .alert(.presented(.dismiss)):
+      return .none
+    case .alert(.dismiss):
+      return .none
+    }
+  }
+  
+  private func handleAsyncAction(
+    state: inout State,
+    action: Action.AsyncAction
+  ) -> Effect<Action> {
+    switch action {
+    case .fetchProductData:
+      return .run { send in
+        do {
+          let products = try await fetchProducts.execute()
+          await send(.inner(.updateProductCategories(products)))
+        } catch {
+          let errorMessage = error.localizedDescription
+          await send(.inner(.showErrorAlert(message: errorMessage)))
+        }
+      }
+    }
+  }
+  
+  private func handleScopeAction(
+    state: inout State,
+    action: Action.ScopeAction
+  ) -> Effect<Action> {
+    switch action {
+    case .cardButton(let action):
+      guard case .view(.onTap) = action else { return .none }
+      return .none
+    }
+  }
+  
+  private func handleDelegateAction(
+    state: inout State,
+    action: Action.DelegateAction
+  ) -> Effect<Action> {
+    return .none
+  }
+  
+  private func handleInnerAction(
+    state: inout State,
+    action: Action.InnerAction
+  ) -> Effect<Action> {
+    switch action {
+    case .updateProductCategories(let categories):
+      state.productCategories = IdentifiedArray(uniqueElements: categories)
+      return .send(.inner(.updateSelectedCategoryId(categories.first?.id ?? "")))
+    case .updateSelectedCategoryId(let id):
+      state.currentSelectedCategoryId = id
+      return .none
+    case .showErrorAlert(let message):
+      state.alert = AlertState {
+        TextState("오류")
+      } actions: {
+        ButtonState(action: .confirmRetry) {
+          TextState("다시 시도")
+        }
+        ButtonState(role: .cancel, action: .dismiss) {
+          TextState("취소")
+        }
+      } message: {
+        TextState(message)
+      }
+      return .none
     }
   }
 

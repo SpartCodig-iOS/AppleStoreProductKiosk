@@ -13,19 +13,16 @@ public struct SegmentData: Identifiable {
   public let icon: String?
 }
 
-public struct SegmentsView<Content: View>: View {
+public struct SegmentsView: View {
   private let items: [SegmentData]
   @Binding private var selectedID: String
-  private let content: (SegmentData, Bool) -> Content
 
   public init(
     items: [SegmentData],
-    selectedID: Binding<String>,
-    content: @escaping (SegmentData, Bool) -> Content
+    selectedID: Binding<String>
   ) {
     self.items = items
     self._selectedID = selectedID
-    self.content = content
   }
 
   public var body: some View {
@@ -37,7 +34,9 @@ public struct SegmentsView<Content: View>: View {
               selectedID = item.id
             }
           }) {
-            content(item, selectedID == item.id)
+            Text(item.title)
+              .font(.system(size: 12))
+              .lineLimit(1)
               .padding(.horizontal, 12)
               .padding(.vertical, 12)
               .background(
@@ -80,16 +79,7 @@ private struct PreviewSegment: View {
         ),
       ],
       selectedID: $selectedSegment
-    ) { item, isSelected in
-      HStack {
-        if let icon = item.icon {
-          Image(systemName: icon)
-        }
-        Text(item.title)
-          .lineLimit(1)
-      }
-      .font(.system(size: 12))
-    }
+    )
   }
 }
 

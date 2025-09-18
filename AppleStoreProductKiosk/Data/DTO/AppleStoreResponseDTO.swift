@@ -2,55 +2,72 @@
 //  AppleStoreResponseDTO.swift
 //  AppleStoreProductKiosk
 //
-//  Created by Wonji Suh  on 9/17/25.
+//  Created by 홍석현 on 9/17/25.
 //
 
 import Foundation
 
-struct AppleStoreResponseDTO: Decodable {
-  let code: Int
-  let message: String
-  let data: StoreDataDTO
+public struct AppleStoreResponseDTO: Decodable {
+  private let data: StoreDataDTO
+}
+
+extension AppleStoreResponseDTO {
+  func toDomain() -> [ProductCategory] {
+    return data.categories.map { category in
+      return ProductCategory(
+        id: category.category,
+        name: category.category,
+        products: category.products.map {
+          Product(
+            id: $0.id,
+            name: $0.name ?? String(),
+            description: $0.description ?? String(),
+            price: Double($0.fromPrice.amount),
+            imageURL: URL(string: $0.images.main)
+          )
+      })
+    }
+  }
 }
 
 struct StoreDataDTO: Decodable {
-  let store: StoreInfoDTO
-  let categories: [CategoryDTO]
+  fileprivate let store: StoreInfoDTO
+  fileprivate let categories: [CategoryDTO]
 }
 
 struct StoreInfoDTO: Decodable {
-  let id: String
-  let region: String
-  let currency: String
-  let updatedAt: String
+  fileprivate let id: String
+  fileprivate let region: String
+  fileprivate let currency: String
+  fileprivate let updatedAt: String
 }
 
 struct CategoryDTO: Decodable {
-  let category: String
-  let products: [ProductDTO]
+  fileprivate let category: String
+  fileprivate let products: [ProductDTO]
 }
 
 struct ProductDTO: Decodable {
-  let id: String
-  let name: String?
-  let description: String?
-  let fromPrice: PriceDTO
-  let links: ProductLinksDTO?
-  let images: ProductImagesDTO
+  fileprivate let id: String
+  fileprivate let name: String?
+  fileprivate let description: String?
+  fileprivate let fromPrice: PriceDTO
+  fileprivate let links: ProductLinksDTO?
+  fileprivate let images: ProductImagesDTO
 }
 
 struct PriceDTO: Decodable {
-  let amount: Int
-  let currency: String
-  let formatted: String
+  fileprivate let amount: Int
+  fileprivate let currency: String
+  fileprivate let formatted: String
 }
 
 struct ProductLinksDTO: Decodable {
-  let buy: String?
-  let imagePage: String?
+  fileprivate let buy: String?
+  fileprivate let imagePage: String?
 }
 
 struct ProductImagesDTO: Decodable {
-  let main: String
-  let thumbnails: [String]
+  fileprivate let main: String
+  fileprivate let thumbnails: [String]
 }
