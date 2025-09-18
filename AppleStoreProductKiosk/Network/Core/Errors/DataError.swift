@@ -41,3 +41,17 @@ enum DataError: Error, LocalizedError, Sendable {
     }
   }
 }
+
+
+extension DataError: Equatable {
+  static func == (lhs: DataError, rhs: DataError) -> Bool {
+    switch (lhs, rhs) {
+    case (.noData, .noData):
+      return true
+    case let (.customError(a), .customError(b)):
+      return a == b
+    default:
+      return false
+    }
+  }
+}
