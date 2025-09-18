@@ -22,7 +22,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		7FB949782E7BB47600E5F3CF /* AppleStoreProductKiosk.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleStoreProductKiosk.xctestplan; sourceTree = "<group>"; };
+		7FB949782E7BB47600E5F3CF /* AppleStoreProductKiosk.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AppleStoreProductKiosk.xctestplan; sourceTree = "<group>"; };
 		C8F725DE2E790F9F00C2A1DE /* AppleStoreProductKiosk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppleStoreProductKiosk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8F725EB2E790FA100C2A1DE /* AppleStoreProductKioskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppleStoreProductKioskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */

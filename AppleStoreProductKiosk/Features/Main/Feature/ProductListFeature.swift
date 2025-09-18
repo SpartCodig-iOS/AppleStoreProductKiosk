@@ -37,6 +37,7 @@ public struct ProductListFeature {
     var cartButtonState: CartButtonFeature.State
 
     @Presents var alert: AlertState<Action.Alert>?
+    @Presents var cart: CartFeature.State?
 
     init(selectedProducts: Shared<[Product]>) {
       self._selectedProducts = selectedProducts
@@ -69,6 +70,7 @@ public struct ProductListFeature {
     @CasePathable
     public enum ScopeAction: Equatable {
       case cardButton(CartButtonFeature.Action)
+      case cart(PresentationAction<CartFeature.Action>)
     }
 
     @CasePathable
@@ -115,6 +117,10 @@ public struct ProductListFeature {
 
     Scope(state: \.cartButtonState, action: \.scope.cardButton) {
       CartButtonFeature()
+    }
+
+    .ifLet(\.$cart, action: \.scope.cart) {
+      CartFeature()
     }
   }
 }
@@ -166,7 +172,13 @@ extension ProductListFeature {
   ) -> Effect<Action> {
     switch action {
     case .cardButton(let action):
-      guard case .view(.onTap) = action else { return .none }
+      switch action {
+      case .view(.onTap):
+        state.cart = CartFeature.State(selectedProducts: state.$selectedProducts)
+        return .none
+      }
+
+    case .cart:
       return .none
     }
   }

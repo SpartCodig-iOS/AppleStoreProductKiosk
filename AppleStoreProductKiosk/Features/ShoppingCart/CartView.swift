@@ -6,8 +6,15 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 struct CartView: View {
+  let store: StoreOf<CartFeature>
+
+  public init(store: StoreOf<CartFeature>) {
+    self.store = store
+  }
+
   @State var item = CartItem()
   var body: some View {
     VStack(spacing: 0) {
@@ -34,6 +41,6 @@ struct CartView: View {
   }
 }
 
-#Preview {
-  CartView()
-}
+//#Preview {
+//  CartView()
+//}
