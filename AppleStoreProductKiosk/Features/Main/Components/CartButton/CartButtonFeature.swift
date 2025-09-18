@@ -15,7 +15,11 @@ public struct CartButtonFeature {
   public struct State: Equatable {
     @Shared var selectedProducts: [Product]
     var totalPrice: Double {
-      return selectedProducts.map { $0.price }.reduce(0, +)
+      selectedProducts
+        .map { product in
+          product.price.extractedPriceValue
+        }
+        .reduce(0, +)
     }
   }
   

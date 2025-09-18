@@ -19,9 +19,9 @@ public struct ProductCardView: View {
   private let imageURL: URL?
   private let title: String
   private let subTitle: String
-  private let price: Double
+  private let price: String
   private var onTapAction: ((String) -> Void)?
-  
+
   public init(
     product: Product,
     onTapAction: ((String) -> Void)? = nil
@@ -70,7 +70,7 @@ public struct ProductCardView: View {
         }
         .frame(height: Layout.textAreaHeight, alignment: .leading)
 
-        Text(price.formattedKRWCurruncy)
+        Text(price)
           .font(.system(size: 20, weight: .semibold))
       }
       .frame(maxWidth: .infinity, alignment: .leading)

@@ -17,7 +17,7 @@ struct AppReducer {
     case productList(ProductListFeature.State)
 
     init() {
-      self = .productList(.init())
+      self = .productList(.init(selectedProducts: Shared<[Product]>(value: [])))
     }
   }
 

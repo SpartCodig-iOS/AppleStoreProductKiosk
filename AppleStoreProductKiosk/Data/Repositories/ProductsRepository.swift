@@ -8,21 +8,21 @@
 import Foundation
 import DiContainer
 
-public struct DefaultProductsRepository: ProductsRepository {
-  private let provider = AsyncProvider<KioskProductService>(session: .shared)
-  
-  public func fetchProducts() async throws -> [ProductCategory] {
-    try await provider.requestAsync(
-      .getAllProducts,
-      decodeTo: AppleStoreResponseDTO.self
-    ).toDomain()
-  }
-}
-
-extension RegisterModule {
-  var productsRepositoryModule: () -> Module {
-    makeDependencyImproved(ProductsRepository.self) {
-      DefaultProductsRepository()
-    }
-  }
-}
+//public struct DefaultProductsRepository: ProductInterface {
+//  private let provider = AsyncProvider<KioskProductService>(session: .shared)
+//  
+//  public func fetchProducts() async throws -> [ProductCategory] {
+//    try await provider.requestAsync(
+//      .getAllProducts,
+//      decodeTo: AppleStoreResponseDTO.self
+//    ).toDomain()
+//  }
+//}
+//
+//extension RegisterModule {
+//  var productsRepositoryModule: () -> Module {
+//    makeDependencyImproved(ProductsRepository.self) {
+//      DefaultProductsRepository()
+//    }
+//  }
+//}

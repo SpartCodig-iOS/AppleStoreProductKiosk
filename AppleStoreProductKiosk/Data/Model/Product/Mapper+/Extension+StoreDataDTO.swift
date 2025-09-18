@@ -18,8 +18,8 @@ extension StoreDataDTO {
           id: productDTO.id,
           name: productName,
           description: productDescription,
-          priceFormatted: productDTO.fromPrice.formatted,
-          mainImageURL: URL(string: productDTO.images.main)
+          price: productDTO.fromPrice.formatted,
+          imageURL: URL(string: productDTO.images.main)
         )
       }
 
@@ -29,6 +29,6 @@ extension StoreDataDTO {
       )
     }
 
-    return ProductCatalog(categories: categories)
+    return ProductCatalog(id: "catalog", categories: categories)
   }
 }

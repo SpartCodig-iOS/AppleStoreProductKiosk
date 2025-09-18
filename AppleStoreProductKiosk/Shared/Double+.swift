@@ -7,6 +7,13 @@
 
 import Foundation
 
+public extension String {
+  var extractedPriceValue: Double {
+    let numericString = self.replacingOccurrences(of: "[^0-9.]", with: "", options: .regularExpression)
+    return Double(numericString) ?? 0.0
+  }
+}
+
 public extension Double {
   private static let currencyFormatter: NumberFormatter = {
     let formatter = NumberFormatter()
