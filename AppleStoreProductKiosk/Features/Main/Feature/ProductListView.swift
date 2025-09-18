@@ -93,7 +93,7 @@ public struct ProductListView: View {
 
 #Preview {
   let initialSelected = Shared<[Product]>(value: [])
-  return ProductListView(
+  ProductListView(
     store: Store(
       initialState: ProductListFeature.State(selectedProducts: initialSelected)
     ) {

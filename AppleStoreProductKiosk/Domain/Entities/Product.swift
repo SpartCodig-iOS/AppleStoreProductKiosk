@@ -31,11 +31,11 @@ public struct Product: Identifiable, Equatable {
 }
 
 // MARK: - 카테고리 엔티티
-public struct ProductCategory: Identifiable, Equatable {
+public struct Category: Identifiable, Equatable {
   public let id: String
   public let name: String
   public let products: [Product]
-  
+
   public init(
     id: String,
     name: String,
@@ -44,6 +44,23 @@ public struct ProductCategory: Identifiable, Equatable {
     self.id = id
     self.name = name
     self.products = products
+  }
+
+  public init(name: String, products: [Product]) {
+    self.id = name.lowercased().replacingOccurrences(of: " ", with: "-")
+    self.name = name
+    self.products = products
+  }
+}
+
+// MARK: - 제품 카탈로그 엔티티
+public struct ProductCatalog: Identifiable, Equatable {
+  public let id: String
+  public let categories: [Category]
+
+  public init(id: String, categories: [Category]) {
+    self.id = id
+    self.categories = categories
   }
 }
 
@@ -204,41 +221,41 @@ public extension Product {
 }
 
 // MARK: - 카테고리 Mock 데이터
-public extension ProductCategory {
-  
+public extension Category {
+
   // MARK: - 개별 카테고리들
-  static let iPhone = ProductCategory(
+  static let iPhone = Category(
     id: "iphone",
     name: "iPhone",
     products: Product.iPhoneProducts
   )
-  
-  static let MacBook = ProductCategory(
+
+  static let MacBook = Category(
     id: "macbook",
     name: "MacBook",
     products: Product.MacBookProducts
   )
-  
-  static let AppleWatch = ProductCategory(
+
+  static let AppleWatch = Category(
     id: "apple-watch",
     name: "Apple Watch",
     products: Product.AppleWatchProducts
   )
-  
-  static let AirPods = ProductCategory(
+
+  static let AirPods = Category(
     id: "airpods",
     name: "AirPods",
     products: Product.AirPodsProducts
   )
-  
-  static let Vision = ProductCategory(
+
+  static let Vision = Category(
     id: "vision",
     name: "Vision",
     products: Product.VisionProducts
   )
-  
+
   // MARK: - 전체 카테고리 목록
-  static let allCategories: [ProductCategory] = [
+  static let allCategories: [Category] = [
     iPhone, MacBook, AppleWatch, AirPods, Vision
   ]
 }

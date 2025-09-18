@@ -22,6 +22,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7FB949782E7BB47600E5F3CF /* AppleStoreProductKiosk.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleStoreProductKiosk.xctestplan; sourceTree = "<group>"; };
 		C8F725DE2E790F9F00C2A1DE /* AppleStoreProductKiosk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppleStoreProductKiosk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8F725EB2E790FA100C2A1DE /* AppleStoreProductKioskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppleStoreProductKioskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -44,6 +45,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				App/Resources/Info.plist,
+				Resources/Assets.xcassets,
+				Resources/Info.plist,
 			);
 			target = C8F725DD2E790F9F00C2A1DE /* AppleStoreProductKiosk */;
 		};
@@ -89,6 +92,7 @@
 		C8F725D52E790F9F00C2A1DE = {
 			isa = PBXGroup;
 			children = (
+				7FB949782E7BB47600E5F3CF /* AppleStoreProductKiosk.xctestplan */,
 				C8F725E02E790F9F00C2A1DE /* AppleStoreProductKiosk */,
 				C8F725EE2E790FA100C2A1DE /* AppleStoreProductKioskTests */,
 				C8F725DF2E790F9F00C2A1DE /* Products */,

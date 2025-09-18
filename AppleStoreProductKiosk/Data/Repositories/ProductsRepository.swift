@@ -9,13 +9,11 @@ import Foundation
 import DiContainer
 
 public struct DefaultProductsRepository: ProductsRepository {
-  private let provider = AsyncProvider<KioskProductService>(session: .shared)
-  
-  public func fetchProducts() async throws -> [ProductCategory] {
-    try await provider.requestAsync(
-      .getAllProducts,
-      decodeTo: AppleStoreResponseDTO.self
-    ).toDomain()
+  public init() {}
+
+  public func fetchProducts() async throws -> ProductCatalog {
+    // 임시로 Mock 데이터 반환
+    return ProductCatalog(id: "default-catalog", categories: Category.allCategories)
   }
 }
 

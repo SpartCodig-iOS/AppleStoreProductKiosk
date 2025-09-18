@@ -28,12 +28,12 @@ struct ProductListFeatureTests {
     
     await store.receive(\.async.fetchProductData)
     await store.receive(\.inner.updateProductCategories) {
-      $0.productCategories = IdentifiedArray(uniqueElements: ProductCategory.allCategories)
+      $0.productCategories = IdentifiedArray(uniqueElements: Category.allCategories)
     }
     await store.receive(\.inner.updateSelectedCategoryId) {
-      $0.currentSelectedCategoryId = ProductCategory.allCategories.first!.id
+      $0.currentSelectedCategoryId = Category.allCategories.first!.id
       // 계산 프로퍼티 결과 검증
-      let expectedItems = ProductCategory.allCategories.first!.products
+      let expectedItems = Category.allCategories.first!.products
       #expect($0.currentItems == IdentifiedArray(uniqueElements: expectedItems))
     }
   }
@@ -53,12 +53,12 @@ struct ProductListFeatureTests {
     
     await store.send(.async(.fetchProductData))
     
-    await store.send(.view(.onTapCategory(id: ProductCategory.AirPods.id)))
-    
+    await store.send(.view(.onTapCategory(id: Category.AirPods.id)))
+
     await store.receive(\.inner.updateSelectedCategoryId) {
-      $0.currentSelectedCategoryId = ProductCategory.AirPods.id
-      
-      let expectedItems = ProductCategory.AirPods.products
+      $0.currentSelectedCategoryId = Category.AirPods.id
+
+      let expectedItems = Category.AirPods.products
       #expect($0.currentItems == IdentifiedArray(uniqueElements: expectedItems))
     }
   }
@@ -80,12 +80,12 @@ struct ProductListFeatureTests {
     await store.send(.view(.onAppear))
     
     // 3) 현재 카테고리의 첫 상품 선택
-    let firstItemId = ProductCategory.allCategories.first!.products.first!.id
-    
+    let firstItemId = Category.allCategories.first!.products.first!.id
+
     // 4) 아이템 추가 액션 전송 → selectedProduct가 업데이트되는지 검증
     await store.send(.view(.onTapAddItem(id: firstItemId))) {
       // 상태 스냅샷 기반 검증
-      let expected = [ProductCategory.allCategories.first!.products.first!]
+      let expected = [Category.allCategories.first!.products.first!]
       $0.$selectedProducts.withLock { $0 = expected }
     }
   }
@@ -104,8 +104,8 @@ struct ProductListFeatureTests {
     store.exhaustivity = .off(showSkippedAssertions: false)
     
     await store.send(.view(.onAppear))
-    
-    let firstCategory = ProductCategory.allCategories.first!
+
+    let firstCategory = Category.allCategories.first!
     
     let p1 = firstCategory.products[0]
     let p2 = firstCategory.products[1]
@@ -136,9 +136,9 @@ struct ProductList_CartButton_SharedIntegrationTests {
     await store.send(.view(.onAppear))
     await store.receive(\.async.fetchProductData)
     await store.receive(\.inner.updateProductCategories) {
-      $0.productCategories = IdentifiedArray(uniqueElements: ProductCategory.allCategories)
+      $0.productCategories = IdentifiedArray(uniqueElements: Category.allCategories)
     }
-    let firstCategory = ProductCategory.allCategories.first!
+    let firstCategory = Category.allCategories.first!
     await store.receive(\.inner.updateSelectedCategoryId) {
       $0.currentSelectedCategoryId = firstCategory.id
     }

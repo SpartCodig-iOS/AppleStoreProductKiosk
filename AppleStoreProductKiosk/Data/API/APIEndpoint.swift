@@ -22,7 +22,7 @@ protocol APIEndpoint {
 
 extension APIEndpoint {
   var baseURL: String {
-    "https://sparatcoding.free.beeceptor.com"
+    "https://applestoreproductkiosk.free.beeceptor.com"
   }
   
   var fullPath: String {

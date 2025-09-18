@@ -10,20 +10,20 @@ import Foundation
 import ComposableArchitecture
 import DiContainer
 
-struct ProductUseCaseImpl: ProductInterface {
+public struct ProductUseCaseImpl: ProductInterface {
   private let repository: ProductInterface
 
-  init(repository: ProductInterface) {
+  public  init(repository: ProductInterface) {
     self.repository = repository
   }
 
   // MARK: - 카테고리들 전체 가지고오기
-  func fetchProductCatalog() async throws -> ProductCatalog {
+  public func fetchProductCatalog() async throws -> ProductCatalog {
     return try await repository.fetchProductCatalog()
   }
 
   // MARK: -특정 카테고리 가져오기
-  func fetchProducts(for category: String) async throws -> [Product] {
+  public func fetchProducts(for category: String) async throws -> [Product] {
     return try await repository.fetchProducts(for: category)
   }
 }
@@ -35,16 +35,16 @@ extension DependencyContainer {
 }
 
 extension ProductUseCaseImpl: DependencyKey {
-  static var liveValue: ProductInterface {
+  public static var liveValue: ProductInterface {
     let repository = UnifiedDI.register(\.productInterface) {
       ProductRepositoryImpl()
     }
     return ProductUseCaseImpl(repository: repository)
   }
-  static var testValue: ProductInterface = MockProductRepository()
+  public static var testValue: ProductInterface = MockProductRepository()
 }
 
-extension DependencyValues {
+public extension DependencyValues {
   var productUseCase: ProductInterface {
     get { self[ProductUseCaseImpl.self] }
     set { self[ProductUseCaseImpl.self] = newValue }

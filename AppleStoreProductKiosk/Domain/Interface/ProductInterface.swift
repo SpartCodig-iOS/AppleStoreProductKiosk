@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ProductInterface {
+public protocol ProductInterface {
   func fetchProductCatalog() async throws -> ProductCatalog
   func fetchProducts(for category: String) async throws -> [Product]
 }

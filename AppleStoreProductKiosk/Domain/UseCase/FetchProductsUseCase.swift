@@ -10,7 +10,7 @@ import Dependencies
 import DiContainer
 
 public protocol FetchProductsUseCase {
-  func execute() async throws -> [ProductCategory]
+  func execute() async throws -> ProductCatalog
 }
 
 public struct FetchProducts: FetchProductsUseCase {
@@ -20,7 +20,7 @@ public struct FetchProducts: FetchProductsUseCase {
     self.repository = repository
   }
   
-  public func execute() async throws -> [ProductCategory] {
+  public func execute() async throws -> ProductCatalog {
     return try await repository.fetchProducts()
   }
 }
@@ -43,25 +43,5 @@ public extension DependencyValues {
   var fetchProductsUseCase: any FetchProductsUseCase {
     get { self[FetchProductsDependencyKey.self] }
     set { self[FetchProductsDependencyKey.self] = newValue }
-  }
-}
-
-class MockProductRepository: ProductsRepository {
-  func fetchProducts() async throws -> [ProductCategory] {
-    return ProductCategory.allCategories
-  }
-}
-
-
-extension RegisterModule {
-  var productUseCaseImplModule: () -> Module {
-    makeUseCaseWithRepository(
-      FetchProductsUseCase.self,
-      repositoryProtocol: ProductsRepository.self,
-      repositoryFallback: MockProductRepository(),
-      factory: { repository in
-        FetchProducts(repository: repository)
-      }
-    )
   }
 }

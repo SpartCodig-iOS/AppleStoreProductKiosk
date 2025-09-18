@@ -16,7 +16,7 @@ struct AppView: View {
     switch store.state {
     case .productList:
         if let store = store.scope(state: \.productList, action: \.view.productList) {
-        ContentView(store: store)
+        ProductListView(store: store)
       }
     }
   }
