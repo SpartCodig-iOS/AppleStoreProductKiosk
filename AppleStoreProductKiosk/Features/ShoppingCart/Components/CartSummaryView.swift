@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct CartSummaryView: View {
-  @Binding var item: CartItem
-  
+  let totalQuantity: Int
+  let totalPrice: Double
+
   var body: some View {
     HStack(spacing: 0) {
       VStack(alignment: .leading, spacing: 10) {
@@ -23,9 +24,9 @@ struct CartSummaryView: View {
       Spacer()
 
       VStack(alignment: .trailing, spacing: 10) {
-        Text("\(item.quantity)개")
+        Text("\(totalQuantity)개")
           .font(.system(size: 14, weight: .semibold))
-        Text("₩\(item.price * item.quantity)")
+        Text(totalPrice.formatted(.currency(code: "KRW")))
           .font(.system(size: 20, weight: .bold))
           .foregroundStyle(.blue)
       }
@@ -36,6 +37,6 @@ struct CartSummaryView: View {
 }
 
 #Preview {
-  @State var item = CartItem()
-  CartSummaryView(item: $item)
+  CartSummaryView(totalQuantity: 3, totalPrice: 3890000)
+    .padding(.horizontal, 20)
 }

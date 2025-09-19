@@ -29,44 +29,24 @@ public struct ProductListView: View {
     }
   }
   
+  private var columns: [GridItem] {
+    Array(repeating: GridItem(.flexible(), spacing: 16), count: adaptiveColumnCount)
+  }
+  
   public var body: some View {
     WithPerceptionTracking {
       VStack {
-        Text("Apple Store")
-          .font(.largeTitle)
-          .fontWeight(.bold)
-        Text("원하는 제품을 선택하고 주문하세요.")
-          .font(.subheadline)
-          .foregroundStyle(Color.secondary)
+        headerView
         
         SegmentsView(
-          items: store.productCategories
-            .map {
-              SegmentData(
-                id: $0.id,
-                title: $0.name,
-                icon: $0.name
-              )
-            },
+          items: store.productCategories.map {
+            SegmentData(id: $0.id, title: $0.name, icon: $0.name)
+          },
           selectedID: $store.currentSelectedCategoryId
         )
         
         ScrollView {
-          LazyVGrid(
-            columns: Array(
-              repeating: GridItem(.flexible(), spacing: 16),
-              count: adaptiveColumnCount
-            ),
-            spacing: 16
-          ) {
-            ForEach(store.currentItems) { product in
-              ProductCardView(product: product) { id in
-                send(.onTapAddItem(id: id))
-              }
-            }
-          }
-          .padding(8)
-          
+          productGrid
           Spacer()
         }
         .scrollIndicators(.hidden)
@@ -83,10 +63,43 @@ public struct ProductListView: View {
           .padding()
         }
       }
-      .onAppear {
-        send(.onAppear)
-      }
+      .onAppear { send(.onAppear) }
       .alert($store.scope(state: \.alert, action: \.view.alert))
+      .cartSheet(store: store)
+    }
+  }
+}
+
+private extension ProductListView {
+  var headerView: some View {
+    VStack {
+      Text("Apple Store")
+        .font(.largeTitle)
+        .fontWeight(.bold)
+      Text("원하는 제품을 선택하고 주문하세요.")
+        .font(.subheadline)
+        .foregroundStyle(Color.secondary)
+    }
+  }
+  
+  var productGrid: some View {
+    LazyVGrid(columns: columns, spacing: 16) {
+      ForEach(store.currentItems) { product in
+        ProductCardView(product: product) { id in
+          send(.onTapAddItem(id: id))
+        }
+      }
+    }
+    .padding(8)
+  }
+}
+
+private extension View {
+  func cartSheet(store: StoreOf<ProductListFeature>) -> some View {
+    self.sheet(
+      store: store.scope(state: \.$cart, action: \.scope.cart)  
+    ) { cartStore in
+      CartView(store: cartStore)
     }
   }
 }

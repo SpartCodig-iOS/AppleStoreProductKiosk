@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct CartActionButtonsView: View {
+  let onTapCancel: () -> Void
+  let onTapCheckout: () -> Void
+  
   var body: some View {
     Grid(horizontalSpacing: 12) {
       GridRow {
-        Button {
-          //전체 취소
-        } label: {
+        Button(action: onTapCancel) {
           Text("전체 취소")
             .font(.system(size: 15, weight: .regular))
             .foregroundStyle(.black)
@@ -25,10 +26,8 @@ struct CartActionButtonsView: View {
             }
         }
         .gridCellColumns(4)
-
-        Button {
-          //결제하기
-        } label: {
+        
+        Button(action: onTapCheckout) {
           Text("결제하기")
             .font(.system(size: 15, weight: .semibold))
             .foregroundStyle(.white)
@@ -44,6 +43,6 @@ struct CartActionButtonsView: View {
   }
 }
 
-  #Preview {
-    CartActionButtonsView()
-  }
+#Preview {
+  CartActionButtonsView(onTapCancel: {}, onTapCheckout: {})
+}
