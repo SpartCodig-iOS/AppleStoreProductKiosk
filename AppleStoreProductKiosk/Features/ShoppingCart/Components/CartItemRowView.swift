@@ -7,37 +7,61 @@
 
 import SwiftUI
 
-//TODO: 데이터 작업할 때 없앨예정
-struct CartItem {
-  let name: String = "iphone17 pro"
-  let price: Int = 1000000
-  let imageName: String = "iphone17pro"
-  var quantity: Int = 2
+struct CartItem: Identifiable, Equatable {
+  let product: Product
+  let quantity: Int
+
+  var id: String { product.id }
+  var name: String { product.name }
+  var price: Double { product.price }
+  var imageURL: URL? { product.imageURL }
+  var subtotal: Double { product.price * Double(quantity) }
+
+  var formattedPrice: String {
+    price.formatted(.currency(code: "KRW"))
+  }
+
+  var formattedSubtotal: String {
+    subtotal.formatted(.currency(code: "KRW"))
+  }
 }
 
 struct CartItemRowView: View {
-  @Binding var item: CartItem
+  let item: CartItem
+  let onTapDecrease: () -> Void
+  let onTapIncrease: () -> Void
+  let onTapRemove: () -> Void
 
   var body: some View {
-    HStack(spacing: 0) {
-      Image(item.imageName)
-        .resizable()
-        .scaledToFit()
-        .frame(width: 80, height: 80)
-        .cornerRadius(10)
+    HStack(spacing: 20) {
+      AsyncImage(url: item.imageURL) { phase in
+        switch phase {
+        case .success(let image):
+          image
+            .resizable()
+            .scaledToFill()
+        case .failure:
+          placeholderImage
+        case .empty:
+          ProgressView()
+        @unknown default:
+          placeholderImage
+        }
+      }
+      .frame(width: 80, height: 80)
+      .background(.gray.opacity(0.1))
+      .clipShape(RoundedRectangle(cornerRadius: 10))
+      .clipped()
 
-      Spacer()
-        .frame(width: 20)
-
-      VStack(alignment: .leading, spacing: 10) {
+      VStack(alignment: .leading, spacing: 8) {
         Text(item.name)
           .font(.system(size: 17, weight: .semibold))
 
-        Text("₩\(item.price)")
+        Text(item.formattedPrice)
           .font(.system(size: 14, weight: .regular))
           .foregroundStyle(.black.opacity(0.7))
 
-        Text("소계: ₩\(item.price * item.quantity)")
+        Text("소계: \(item.formattedSubtotal)")
           .font(.system(size: 12, weight: .regular))
           .foregroundStyle(.blue)
       }
@@ -46,9 +70,7 @@ struct CartItemRowView: View {
 
       HStack(spacing: 13) {
         if item.quantity > 1 {
-          Button {
-            item.quantity -= 1
-          } label: {
+          Button(action: onTapDecrease) {
             Image(systemName: "minus")
               .font(.system(size: 15))
               .padding(12)
@@ -61,9 +83,7 @@ struct CartItemRowView: View {
               )
           }
         } else {
-          Button {
-            //삭제
-          } label: {
+          Button(action: onTapRemove) {
             Image(systemName: "trash")
               .font(.system(size: 13))
               .padding(8)
@@ -77,11 +97,10 @@ struct CartItemRowView: View {
           }
         }
 
-        Text("\(item.quantity)").frame(minWidth: 20)
+        Text("\(item.quantity)")
+          .frame(minWidth: 20)
 
-        Button {
-          item.quantity += 1
-        } label: {
+        Button(action: onTapIncrease) {
           Image(systemName: "plus")
             .font(.system(size: 15))
             .padding(7)
@@ -100,9 +119,22 @@ struct CartItemRowView: View {
     .background(.gray.opacity(0.05))
     .clipShape(RoundedRectangle(cornerRadius: 14))
   }
+
+  @ViewBuilder
+  private var placeholderImage: some View {
+    Image(systemName: "photo")
+      .font(.system(size: 26))
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .foregroundStyle(.gray.opacity(0.5))
+  }
 }
 
 #Preview {
-  @State var item = CartItem(quantity: 1)
-  CartItemRowView(item: $item)
+  CartItemRowView(
+    item: CartItem(product: .iPhone16Pro, quantity: 2),
+    onTapDecrease: {},
+    onTapIncrease: {},
+    onTapRemove: {}
+  )
+  .padding()
 }
