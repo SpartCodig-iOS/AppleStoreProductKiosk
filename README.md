@@ -46,9 +46,9 @@ TCA(The Composable Architecture)와 Clean Architecture를 적용한 iOS 앱으�
 - **UseCase Pattern**: 비즈니스 로직 캡슐화
 
 ### 🧪 테스팅
-- **XCTest**: 유닛 테스트 프레임워크
-- **TCA TestStore**: TCA 전용 테스트 스토어
 - **Swift Testing**: 모던 테스트 프레임워크 (@Test)
+- **TCA TestStore**: TCA 전용 테스트 스토어
+- **XCTest**: 기본 테스트 인프라
 
 ## 📁 프로젝트 구조
 
@@ -344,12 +344,13 @@ AppleStoreProductKioskTests/
     └── ProductListFeatureTests.swift     # TCA Feature 테스트
 ```
 
-### TCA 테스트 예시
+### Swift Testing + TCA 테스트 예시
 ```swift
 @Test
 func onAppear_호출시_상품데이터를_가져오고_카테고리를_초기화한다() async {
+    let initialSelected = Shared<[Product]>(value: [])
     let store = TestStore(
-        initialState: ProductListFeature.State(selectedProducts: shared)
+        initialState: ProductListFeature.State(selectedProducts: initialSelected)
     ) {
         ProductListFeature()
     }
@@ -359,14 +360,17 @@ func onAppear_호출시_상품데이터를_가져오고_카테고리를_초기�
     await store.receive(\.inner.updateProductCategories) {
         $0.productCategories = IdentifiedArray(uniqueElements: Category.allCategories)
     }
+    await store.receive(\.inner.updateSelectedCategoryId) {
+        $0.currentSelectedCategoryId = Category.allCategories.first!.id
+    }
 }
 ```
 
 ### 테스트 커버리지
-- **Domain Layer**: 비즈니스 로직 단위 테스트
-- **Data Layer**: Repository 및 Service 테스트
-- **Presentation Layer**: TCA Feature 통합 테스트
-- **Network Layer**: API 호출 및 응답 처리 테스트
+- **Domain Layer**: 비즈니스 로직 단위 테스트 (Swift Testing)
+- **Data Layer**: Repository 및 Service 테스트 (Swift Testing)
+- **Presentation Layer**: TCA Feature 통합 테스트 (Swift Testing + TCA TestStore)
+- **Network Layer**: API 호출 및 응답 처리 테스트 (Swift Testing)
 
 ## 🚀 빌드 및 실행
 
@@ -436,7 +440,7 @@ xcodebuild test \
 - **SwiftUI**: 선언적 UI 프레임워크
 - **Combine**: 리액티브 프로그래밍 (TCA 내부적 사용)
 - **Foundation**: 기본 시스템 기능
-- **XCTest**: 유닛 테스트 프레임워크
+- **Swift Testing**: 모던 테스트 프레임워크
 
 ## 🔧 개발 도구 및 워크플로우
 
